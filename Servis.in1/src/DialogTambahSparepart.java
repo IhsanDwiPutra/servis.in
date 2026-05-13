@@ -8,6 +8,9 @@
  * @author ACER
  */
 public class DialogTambahSparepart extends javax.swing.JDialog {
+    
+    // Variabel array untuk menyimpan data yang akan dikirim ke form utama
+    Object[] dataBaru = null;
 
     /**
      * Creates new form DialogTambahSparepart
@@ -15,6 +18,28 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
     public DialogTambahSparepart(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    private void hitungSubtotalSparepart() {
+        try {
+            // Ambil nilai harga dari tfHargaSatuan (Harga Satuan)
+            // Jika kosong, anggap 0
+            String teksHarga = tfHargaSatuan.getText();
+            double harga = teksHarga.isEmpty() ? 0 : Double.parseDouble(teksHarga);
+            
+            // Ambil nilai angka dari sJumlah (Jumlah)
+            // sJumlah mengembalikan tipe data Object, jadi harus di-casting ke Integer
+            int jumlah = (Integer) sJumlah.getValue();
+            
+            // Hitung subtotal
+            double subtotal = harga * jumlah;
+            
+            // Tampilkan hasilnya ke tfSubtotal (Subtotal) tanpa angka desimal (.0f)
+            tfSubtotal.setText(String.format("%.0f", subtotal));
+        } catch (Exception e) {
+            // Jika ada error (misal harga belum dipilih), set subtotal jadi 0
+            tfSubtotal.setText("0");
+        }
     }
 
     /**
@@ -28,21 +53,21 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbSparepart = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        tfHargaSatuan = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        sJumlah = new javax.swing.JSpinner();
         jLabel6 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        tfSubtotal = new javax.swing.JTextField();
+        btnBatal = new javax.swing.JButton();
+        btnTambah = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
 
@@ -53,7 +78,12 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Nama Sparepart");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih sparepart...", "SSD NvMe 512GB", "RAM DDR4 16GB", "RAM DDR4 8GB", "HDD 1TB" }));
+        cbSparepart.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih sparepart...", "SSD NvMe 512GB", "RAM DDR4 16GB", "RAM DDR4 8GB", "HDD 1TB" }));
+        cbSparepart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbSparepartActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("Katergori");
@@ -63,10 +93,22 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("Harga Satuan");
 
-        jTextField1.setText("jTextField1");
+        tfHargaSatuan.setEditable(false);
+        tfHargaSatuan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfHargaSatuanActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setText("Stok Tersedia");
+
+        sJumlah.setModel(new javax.swing.SpinnerNumberModel());
+        sJumlah.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sJumlahStateChanged(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setText("Satuan");
@@ -81,14 +123,24 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel8.setText("Subtotal");
 
-        jTextField4.setText("jTextField4");
+        tfSubtotal.setEditable(false);
 
-        jButton1.setForeground(new java.awt.Color(21, 100, 230));
-        jButton1.setText("Batal");
+        btnBatal.setForeground(new java.awt.Color(21, 100, 230));
+        btnBatal.setText("Batal");
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
 
-        jButton2.setBackground(new java.awt.Color(21, 100, 230));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("+ Tambah Ke Keranjang");
+        btnTambah.setBackground(new java.awt.Color(21, 100, 230));
+        btnTambah.setForeground(new java.awt.Color(255, 255, 255));
+        btnTambah.setText("+ Tambah Ke Keranjang");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -101,8 +153,8 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel4)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cbSparepart, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tfHargaSatuan, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -118,19 +170,19 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
-                            .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(sJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(100, 100, 100)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                            .addComponent(tfSubtotal, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(btnBatal)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(btnTambah)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -142,7 +194,7 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbSparepart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -151,7 +203,7 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfHargaSatuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24)
@@ -160,12 +212,12 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(sJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
+                    .addComponent(btnTambah)
+                    .addComponent(btnBatal))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -214,6 +266,73 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cbSparepartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbSparepartActionPerformed
+        // Ambil urutan index yang dipilih
+        int pilihan = cbSparepart.getSelectedIndex();
+        double hargaSatuan = 0;
+        
+        switch (pilihan) {
+            case 1:
+                hargaSatuan = 750000;
+                break;
+            case 2:
+                hargaSatuan = 550000;
+                break;
+            case 3:
+                hargaSatuan = 300000;
+                break;
+            case 4:
+                hargaSatuan = 525000;
+                break;
+            default:
+                hargaSatuan = 0;
+                break;
+        }
+        
+        // Tampilkan harga ke tfHargaSatuan
+        tfHargaSatuan.setText(String.format("%.0f", hargaSatuan));
+        
+        // Panggil fungsi hitung agar subtotal langsung update saat harga berubah
+        hitungSubtotalSparepart();
+    }//GEN-LAST:event_cbSparepartActionPerformed
+
+    private void sJumlahStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sJumlahStateChanged
+        hitungSubtotalSparepart();
+    }//GEN-LAST:event_sJumlahStateChanged
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        try {
+            // Ambil nilai dari komponen
+            String nama = cbSparepart.getSelectedItem().toString();
+            int qty = (Integer) sJumlah.getValue();
+            
+            // Validasi: Cegah jika kasir belum milih barang atau jumlahnya 0
+            if (nama.contains("Pilih") || qty == 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Pilih barang dan pastikan jumlah lebih dari 0!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+                return; // Hentikan proses
+            }
+            
+            double harga = Double.parseDouble(tfHargaSatuan.getText()); // Kolom harga satuan
+            double subtotal = Double.parseDouble(tfSubtotal.getText()); // Kolom subtotal
+            
+            // Bungkus ke dalam Array Object
+            dataBaru = new Object[]{"", nama, qty, (int) harga, (int) subtotal};
+            
+            // Tutup pop-up
+            this.dispose();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Terjadi kesalahan sistem", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void tfHargaSatuanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfHargaSatuanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfHargaSatuanActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnBatalActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -257,9 +376,9 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnBatal;
+    private javax.swing.JButton btnTambah;
+    private javax.swing.JComboBox<String> cbSparepart;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -271,10 +390,10 @@ public class DialogTambahSparepart extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JSpinner sJumlah;
+    private javax.swing.JTextField tfHargaSatuan;
+    private javax.swing.JTextField tfSubtotal;
     // End of variables declaration//GEN-END:variables
 }
