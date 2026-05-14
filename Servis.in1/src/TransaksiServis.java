@@ -4,6 +4,13 @@ public class TransaksiServis {
     private double totalPaket;
     private double subtotalSparepart;
     private double uangPembayaran;
+    
+    // Data Pelanggan
+    private String idPelanggan;
+    private String namaPelanggan;
+    private String noHP;
+    private String alamat;
+    private String catatan;
 
     public double getTotalJasa() {
         return totalJasa;
@@ -46,5 +53,47 @@ public class TransaksiServis {
     public double hitungKembalian(){
         return uangPembayaran - hitungGrandTotal();
     }
+
+    public String getIdPelanggan() {
+        return idPelanggan;
+    }
+
+    public void setIdPelanggan(String idPelanggan) {
+        this.idPelanggan = idPelanggan;
+    }
+
+    public String getNamaPelanggan() {
+        return namaPelanggan;
+    }
+
+    public void setNamaPelanggan(String namaPelanggan) {
+        this.namaPelanggan = namaPelanggan;
+    }
+
+    public String getNoHP() {
+        return noHP;
+    }
+
+    public void setNoHP(String noHP) {
+        this.noHP = noHP;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
+    }
+
+    public String getCatatan() {
+        return catatan;
+    }
+
+    public void setCatatan(String catatan) {
+        this.catatan = catatan;
+    }
+    
+    
     
 }
