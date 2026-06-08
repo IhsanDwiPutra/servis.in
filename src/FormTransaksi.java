@@ -329,6 +329,7 @@ public class FormTransaksi extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Servis.In - V1.0");
         setMinimumSize(new java.awt.Dimension(1280, 900));
 
         PanelFrame.setBackground(new java.awt.Color(255, 255, 255));
@@ -1375,40 +1376,77 @@ public class FormTransaksi extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKeluarActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-            // --- Proses Bersih-Bersih Form ---
-            // Kosongkan semua isian teks
-            tfNama.setText("");
-            tfNoHP.setText("");
-            taAlamat.setText("");
-            taCatatan.setText("");
-            
-            tfTotalJasa.setText("");
-            tfSubSparepart.setText("");
-            tfSubPaket.setText("");
-            tfSubJasa.setText("");
-            tfGrandTotal.setText("");
-            tfPembayaran.setText("");
-            tfKembalian.setText("");
-            
-            // Reset Jenis Transaksi
-            btnGrupJenisTransaksi.clearSelection();
-            cbxPilihPaket.setSelectedIndex(0);
-            
-            // Hapus semua centang jasa
-            cbBersih.setSelected(false);
-            cbGantiHdd.setSelected(false);
-            cbGantiKey.setSelected(false);
-            cbGantiLcd.setSelected(false);
-            cbInSoft.setSelected(false);
-            cbInulWin.setSelected(false);
-            cbLain.setSelected(false);
-            cbPerbaikiMothe.setSelected(false);
-            cbSetBios.setSelected(false);
-            cbUpRam.setSelected(false);
-            
-            // Kosongkan keranjang di tabel
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tSparepart.getModel();
-            model.setRowCount(0); // Menghapus semua baris
+            // 1. Munculkan konfirmasi sebelum reset
+            int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(this, 
+                    "Apakah Anda yakin ingin membatalkan transaksi dan mereset semua form?",
+                    "Konfirmasi Reset",
+                    javax.swing.JOptionPane.YES_NO_OPTION);
+
+            if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+
+                // 2. === LOGIKA PENGEMBALIAN STOK MASSAL ===
+                javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tSparepart.getModel();
+
+                try {
+                    // Looping untuk membaca semua baris yang ada di keranjang SEBELUM dihapus
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        // Index 2 = Nama Sparepart, Index 3 = Qty (Sesuai perbaikan sebelumnya)
+                        String namaSparepart = model.getValueAt(i, 2).toString();
+                        int qtyKembali = Integer.parseInt(model.getValueAt(i, 3).toString());
+
+                        // Kembalikan stok ke array berdasarkan namanya
+                        if (namaSparepart.contains("SSD NvMe 512GB")) { 
+                            DialogTambahSparepart.stokGlobal[1] += qtyKembali;
+                        } else if (namaSparepart.contains("RAM DDR4 16GB")) { 
+                            DialogTambahSparepart.stokGlobal[2] += qtyKembali;
+                        } else if (namaSparepart.contains("RAM DDR4 8GB")) {
+                            DialogTambahSparepart.stokGlobal[3] += qtyKembali;
+                        } else if (namaSparepart.contains("HDD 1TB")) {
+                            DialogTambahSparepart.stokGlobal[4] += qtyKembali;
+                        }
+                        // (Jangan lupa sesuaikan teks "Nama Barang" di atas dengan barang aslimu ya!)
+                    }
+                } catch (Exception e) {
+                    System.out.println("Gagal mengembalikan stok saat reset: " + e.getMessage());
+                }
+
+                // 3. --- PROSES BERSIH-BERSIH FORM ---
+                // Kosongkan keranjang di tabel SETELAH stok aman dikembalikan
+                model.setRowCount(0); 
+
+                // Kosongkan semua isian teks
+                tfNama.setText("");
+                tfNoHP.setText("");
+                taAlamat.setText("");
+                taCatatan.setText("");
+
+                tfTotalJasa.setText("");
+                tfSubSparepart.setText("");
+                tfSubPaket.setText("");
+                tfSubJasa.setText("");
+                tfGrandTotal.setText("");
+                tfPembayaran.setText("");
+                tfKembalian.setText("");
+
+                // Reset Jenis Transaksi
+                btnGrupJenisTransaksi.clearSelection();
+                cbxPilihPaket.setSelectedIndex(0);
+
+                // Hapus semua centang jasa
+                cbBersih.setSelected(false);
+                cbGantiHdd.setSelected(false);
+                cbGantiKey.setSelected(false);
+                cbGantiLcd.setSelected(false);
+                cbInSoft.setSelected(false);
+                cbInulWin.setSelected(false);
+                cbLain.setSelected(false);
+                cbPerbaikiMothe.setSelected(false);
+                cbSetBios.setSelected(false);
+                cbUpRam.setSelected(false);
+
+                // 4. Beri notifikasi sukses
+                javax.swing.JOptionPane.showMessageDialog(this, "Transaksi dibatalkan. Semua stok telah dikembalikan ke sistem.");
+            }
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnHapusSparepartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusSparepartActionPerformed
